@@ -354,7 +354,7 @@ public class CustomAuthRealm extends AppservRealm {
     String[] groups = null;
 
 
-    _logger.log(Level.INFO, "Authenticating: " + username);
+    _logger.log(Level.FINEST, "Authenticating: " + username);
 
     // make a yubikey otp check
     if (password.endsWith(AuthenticationConstants.YUBIKEY_USER_MARKER)) {
@@ -366,7 +366,7 @@ public class CustomAuthRealm extends AppservRealm {
         setGroupNames(username, groups);
       } 
     } else if (isValidMobileUser(username, password)) {
-      _logger.log(Level.INFO, "Validated mobile login for: {0}", username);
+      _logger.log(Level.FINEST, "Validated mobile login for: {0}", username);
       groups = findGroups(username);
       groups = addAssignGroups(groups);
       setGroupNames(username, groups);
@@ -589,13 +589,7 @@ public class CustomAuthRealm extends AppservRealm {
       if (rs.next()) {
         // Get the user's credentials
         pwd = rs.getString(1);
-
-        if (HEX.equalsIgnoreCase(getProperty(PARAM_ENCODING))) {
-          // for only normal password          
-          valid = pwd.equalsIgnoreCase(hpwd) && validateOTP(otpCode.substring(0, 12), otpCode.substring(split));                 
-        } else {
-          valid = pwd.equalsIgnoreCase(hpwd) && validateOTP(otpCode.substring(0, 12), otpCode.substring(split));
-        }
+        valid = pwd.equalsIgnoreCase(hpwd) && validateOTP(otpCode.substring(0, 12), otpCode.substring(split));
       }
     } catch (SQLException ex) {
       _logger.log(Level.SEVERE, "CAuth realm invalid Yubikey user step 5", new String[]{user, ex.toString()});
